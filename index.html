@@ -1,0 +1,832 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Apto — Smart Coaching Platform</title>
+  <meta name="description" content="The depth of spreadsheets. The convenience of an app. One platform for fitness coaches to manage everything.">
+  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='10' width='80' height='80' rx='18' fill='%2310422C' stroke='%232ECC71' stroke-width='3'/><polyline points='22,65 35,50 45,55 55,40 65,35 78,22' fill='none' stroke='%232ECC71' stroke-width='4' stroke-linecap='round'/><circle cx='78' cy='22' r='5' fill='%232ECC71'/></svg>">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+    :root {
+      --bg: #0D1117;
+      --surface: #161B22;
+      --card: #1C2128;
+      --accent: #2ECC71;
+      --accent-dim: #1a6b3a;
+      --text: #F0F3F8;
+      --muted: #8B949E;
+      --line: #2C313A;
+      --blue: #3498DB;
+      --yellow: #F1C40F;
+      --orange: #E67E22;
+      --purple: #9B59B6;
+      --red: #E74C3C;
+      --pink: #E91E63;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+
+    /* ========== AMBIENT BACKGROUND ========== */
+    .ambient {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background:
+        radial-gradient(ellipse 600px 400px at 20% 30%, rgba(46,204,113,0.04) 0%, transparent 70%),
+        radial-gradient(ellipse 500px 500px at 80% 70%, rgba(52,152,219,0.03) 0%, transparent 70%);
+    }
+
+    .grid-bg {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 0;
+      background-image:
+        linear-gradient(rgba(22,27,34,0.15) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(22,27,34,0.15) 1px, transparent 1px);
+      background-size: 60px 60px;
+      opacity: 0.5;
+    }
+
+    section { position: relative; z-index: 1; }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 0 24px;
+    }
+
+    /* ========== HERO ========== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 80px 24px;
+    }
+
+    .logo-icon {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 24px;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    .logo-text {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: -3px;
+      color: var(--text);
+      animation: fadeUp 0.8s ease-out 0.1s both;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    .hero-tagline {
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--text);
+      margin-top: 20px;
+      line-height: 1.3;
+      animation: fadeUp 0.8s ease-out 0.2s both;
+    }
+
+    .hero-tagline em {
+      font-style: normal;
+      color: var(--accent);
+    }
+
+    .hero-sub {
+      font-size: 18px;
+      color: var(--muted);
+      margin-top: 12px;
+      max-width: 500px;
+      animation: fadeUp 0.8s ease-out 0.3s both;
+    }
+
+    .hero-cta {
+      margin-top: 40px;
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+      justify-content: center;
+      animation: fadeUp 0.8s ease-out 0.4s both;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: var(--bg);
+      font-weight: 800;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      border: none;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-primary:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 30px rgba(46,204,113,0.3);
+    }
+
+    .btn-secondary {
+      background: transparent;
+      color: var(--accent);
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 32px;
+      border-radius: 12px;
+      border: 1px solid var(--accent);
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s;
+      font-family: inherit;
+    }
+
+    .btn-secondary:hover {
+      background: rgba(46,204,113,0.1);
+    }
+
+    .scroll-hint {
+      position: absolute;
+      bottom: 40px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: var(--muted);
+      font-size: 13px;
+      animation: bounce 2s infinite;
+    }
+
+    /* ========== PROBLEM ========== */
+    .problem {
+      padding: 100px 24px;
+    }
+
+    .problem-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+
+    .problem-left h2 {
+      font-size: 36px;
+      font-weight: 900;
+      line-height: 1.2;
+      margin-bottom: 20px;
+    }
+
+    .problem-left h2 span { color: var(--red); }
+
+    .problem-left p {
+      color: var(--muted);
+      font-size: 16px;
+      line-height: 1.7;
+    }
+
+    .tool-stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .tool-item {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 20px;
+      background: var(--surface);
+      border-radius: 14px;
+      border: 1px solid var(--line);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .tool-item .strike {
+      position: absolute;
+      top: 50%;
+      left: 16px;
+      right: 16px;
+      height: 2px;
+      background: var(--red);
+      transform: translateY(-50%) scaleX(0);
+      transform-origin: left;
+      transition: transform 0.6s ease-out;
+    }
+
+    .tool-item.struck .strike { transform: translateY(-50%) scaleX(1); }
+    .tool-item.struck { opacity: 0.5; }
+
+    .tool-icon { font-size: 22px; }
+    .tool-text { color: var(--text); font-weight: 600; font-size: 15px; }
+
+    /* ========== FEATURES ========== */
+    .features {
+      padding: 100px 24px;
+    }
+
+    .section-label {
+      color: var(--accent);
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 3px;
+      text-transform: uppercase;
+      text-align: center;
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-size: 36px;
+      font-weight: 900;
+      text-align: center;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .section-subtitle {
+      color: var(--muted);
+      font-size: 17px;
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 60px;
+    }
+
+    .feature-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 20px;
+    }
+
+    .feature-card {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px 24px;
+      border: 1px solid var(--line);
+      transition: all 0.3s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .feature-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 4px;
+      height: 100%;
+      border-radius: 0 4px 4px 0;
+    }
+
+    .feature-card:nth-child(1)::before { background: var(--accent); }
+    .feature-card:nth-child(2)::before { background: var(--yellow); }
+    .feature-card:nth-child(3)::before { background: var(--blue); }
+    .feature-card:nth-child(4)::before { background: var(--purple); }
+    .feature-card:nth-child(5)::before { background: var(--orange); }
+    .feature-card:nth-child(6)::before { background: var(--red); }
+
+    .feature-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--accent);
+      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
+    }
+
+    .feature-icon {
+      font-size: 28px;
+      margin-bottom: 14px;
+    }
+
+    .feature-title {
+      font-size: 17px;
+      font-weight: 800;
+      margin-bottom: 8px;
+    }
+
+    .feature-desc {
+      color: var(--muted);
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    /* ========== USP ========== */
+    .usp {
+      padding: 100px 24px;
+    }
+
+    .usp-card {
+      background: var(--surface);
+      border-radius: 24px;
+      padding: 60px;
+      border: 1px solid var(--line);
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .usp-card::before {
+      content: '';
+      position: absolute;
+      top: -100px;
+      right: -100px;
+      width: 300px;
+      height: 300px;
+      background: radial-gradient(circle, rgba(46,204,113,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+
+    .usp-left h2 {
+      font-size: 32px;
+      font-weight: 900;
+      margin-bottom: 16px;
+      line-height: 1.2;
+    }
+
+    .usp-counter {
+      font-size: 64px;
+      font-weight: 900;
+      color: var(--accent);
+      line-height: 1;
+      margin-bottom: 8px;
+    }
+
+    .usp-counter-label {
+      color: var(--muted);
+      font-size: 18px;
+      margin-bottom: 20px;
+    }
+
+    .usp-left p {
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    .usp-toggles {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 12px 18px;
+      background: var(--card);
+      border-radius: 12px;
+    }
+
+    .toggle-label { font-weight: 600; font-size: 14px; }
+
+    .toggle-switch {
+      width: 40px;
+      height: 22px;
+      border-radius: 11px;
+      background: var(--accent);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .toggle-switch::after {
+      content: '';
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: white;
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .toggle-switch.off {
+      background: var(--line);
+    }
+
+    .toggle-switch.off::after {
+      right: auto;
+      left: 2px;
+    }
+
+    /* ========== PRICING ========== */
+    .pricing {
+      padding: 100px 24px;
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 16px;
+    }
+
+    .price-card {
+      background: var(--surface);
+      border-radius: 18px;
+      padding: 28px 20px;
+      text-align: center;
+      border: 1px solid var(--line);
+      transition: all 0.3s;
+    }
+
+    .price-card.featured {
+      border-color: var(--accent);
+      background: linear-gradient(135deg, var(--surface) 0%, rgba(46,204,113,0.05) 100%);
+      transform: scale(1.04);
+    }
+
+    .price-card:hover { transform: translateY(-4px); }
+    .price-card.featured:hover { transform: scale(1.04) translateY(-4px); }
+
+    .price-name { font-weight: 800; font-size: 16px; margin-bottom: 8px; }
+    .price-amount { font-size: 32px; font-weight: 900; color: var(--accent); }
+    .price-period { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
+    .price-clients { color: var(--muted); font-size: 14px; }
+    .price-badge {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--bg);
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 10px;
+      border-radius: 20px;
+      margin-bottom: 12px;
+    }
+
+    /* ========== CTA ========== */
+    .cta {
+      padding: 100px 24px 120px;
+      text-align: center;
+    }
+
+    .cta h2 {
+      font-size: 40px;
+      font-weight: 900;
+      margin-bottom: 12px;
+    }
+
+    .cta p {
+      color: var(--muted);
+      font-size: 18px;
+      margin-bottom: 40px;
+    }
+
+    .email-form {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+      max-width: 480px;
+      margin: 0 auto;
+    }
+
+    .email-input {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: var(--surface);
+      color: var(--text);
+      font-size: 15px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .email-input:focus { border-color: var(--accent); }
+    .email-input::placeholder { color: var(--muted); }
+
+    .form-note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-top: 12px;
+    }
+
+    /* ========== FOOTER ========== */
+    .footer {
+      padding: 30px 24px;
+      text-align: center;
+      border-top: 1px solid var(--line);
+    }
+
+    .footer p {
+      color: var(--muted);
+      font-size: 13px;
+    }
+
+    .footer-brand {
+      color: var(--accent);
+      font-weight: 800;
+    }
+
+    /* ========== ANIMATIONS ========== */
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: all 0.7s ease-out;
+    }
+
+    .reveal.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    /* ========== RESPONSIVE ========== */
+    @media (max-width: 768px) {
+      .logo-text { font-size: 48px; }
+      .hero-tagline { font-size: 22px; }
+      .problem-grid { grid-template-columns: 1fr; gap: 40px; }
+      .feature-grid { grid-template-columns: 1fr; }
+      .usp-card { grid-template-columns: 1fr; padding: 36px 24px; }
+      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
+      .price-card.featured { transform: scale(1); }
+      .email-form { flex-direction: column; }
+      .section-title { font-size: 28px; }
+      .cta h2 { font-size: 30px; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="ambient"></div>
+<div class="grid-bg"></div>
+
+<!-- HERO -->
+<section class="hero">
+  <svg class="logo-icon" viewBox="0 0 100 100">
+    <rect x="10" y="10" width="80" height="80" rx="18" fill="#10422C" stroke="#2ECC71" stroke-width="3"/>
+    <polyline points="22,65 35,50 45,55 55,40 65,35 78,22" fill="none" stroke="#2ECC71" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="78" cy="22" r="5" fill="#2ECC71"/>
+    <circle cx="78" cy="22" r="3" fill="#80E6A8"/>
+  </svg>
+  <div class="logo-text">apto</div>
+  <div class="hero-tagline">The depth of spreadsheets.<br><em>The convenience of an app.</em></div>
+  <p class="hero-sub">One platform for fitness coaches to manage clients, training, nutrition, check-ins, body composition, and everything in between.</p>
+  <div class="hero-cta">
+    <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
+    <a href="#features" class="btn-secondary">See Features</a>
+  </div>
+  <div class="scroll-hint">↓ Scroll to explore</div>
+</section>
+
+<!-- PROBLEM -->
+<section class="problem">
+  <div class="container">
+    <div class="problem-grid">
+      <div class="problem-left reveal">
+        <h2>Your coaching "stack" is <span>broken</span>.</h2>
+        <p>You're juggling 3-5 tools to manage each client. Spreadsheets for tracking, WhatsApp for check-ins, a separate app for programming, another for nutrition. Data everywhere. Nothing connected. Hours wasted on admin instead of coaching.</p>
+      </div>
+      <div class="tool-stack reveal">
+        <div class="tool-item struck">
+          <span class="tool-icon">📊</span>
+          <span class="tool-text">Google Sheets for tracking</span>
+          <div class="strike"></div>
+        </div>
+        <div class="tool-item struck">
+          <span class="tool-icon">📱</span>
+          <span class="tool-text">WhatsApp for check-in photos</span>
+          <div class="strike"></div>
+        </div>
+        <div class="tool-item struck">
+          <span class="tool-icon">🍎</span>
+          <span class="tool-text">MyFitnessPal for nutrition</span>
+          <div class="strike"></div>
+        </div>
+        <div class="tool-item struck">
+          <span class="tool-icon">📋</span>
+          <span class="tool-text">Excel for programs</span>
+          <div class="strike"></div>
+        </div>
+        <div class="tool-item struck">
+          <span class="tool-icon">📧</span>
+          <span class="tool-text">Email for onboarding</span>
+          <div class="strike"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features" id="features">
+  <div class="container">
+    <div class="section-label reveal">Everything in one place</div>
+    <h2 class="section-title reveal">Built for how coaches actually work.</h2>
+    <p class="section-subtitle reveal">Every feature designed by a coach who was tired of the same fragmented workflow.</p>
+
+    <div class="feature-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon">🎯</div>
+        <div class="feature-title">Per-Client Check-ins</div>
+        <div class="feature-desc">34+ individually toggleable check-in fields. Configure exactly what each client tracks. No other platform does this.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📊</div>
+        <div class="feature-title">Trends & Analytics</div>
+        <div class="feature-desc">Weight, nutrition, wellness charts with time-range filtering. Color-coded dot ratings for instant visual scanning.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">📐</div>
+        <div class="feature-title">Body Composition</div>
+        <div class="feature-desc">Skinfold measurements with auto body fat calculation. Jackson-Pollock, Durnin-Womersley formulas built in.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">💪</div>
+        <div class="feature-title">Training Plans</div>
+        <div class="feature-desc">878+ exercises with images. Build programs, assign to clients, edit per-client. Workout logging with rest timer.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🥗</div>
+        <div class="feature-title">Nutrition Plans</div>
+        <div class="feature-desc">Diet plans with Training/Rest/Flex day types. FatSecret food database integration. Auto macro calculation.</div>
+      </div>
+      <div class="feature-card reveal">
+        <div class="feature-icon">🩸</div>
+        <div class="feature-title">Bloodwork Tracking</div>
+        <div class="feature-desc">18 lab markers with normal range indicators. Track hormones, lipids, liver enzymes, metabolic markers over time.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- USP -->
+<section class="usp">
+  <div class="container">
+    <div class="usp-card reveal">
+      <div class="usp-left">
+        <div class="section-label" style="text-align:left">What makes Apto different</div>
+        <h2>Every client is unique.<br>Their app should be too.</h2>
+        <div class="usp-counter" id="counter">34+</div>
+        <div class="usp-counter-label">toggleable fields per client</div>
+        <p>A bodybuilding competitor needs skinfold tracking. A general fitness client doesn't. With Apto, coaches configure exactly what each client sees and tracks. Three levels of control: global defaults, coach preferences, per-client overrides.</p>
+      </div>
+      <div class="usp-toggles">
+        <div class="toggle-row"><span class="toggle-label">Macro Tracking</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Sleep Quality</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Muscle Soreness</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Bloodwork</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Skinfold Measurements</span><div class="toggle-switch off"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Progress Photos</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Stress Levels</span><div class="toggle-switch"></div></div>
+        <div class="toggle-row"><span class="toggle-label">Cycle Tracker</span><div class="toggle-switch off"></div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing" id="pricing">
+  <div class="container">
+    <div class="section-label reveal">Simple pricing</div>
+    <h2 class="section-title reveal">All features included. Always.</h2>
+    <p class="section-subtitle reveal">No feature gates. No hidden costs. Just pay for how many clients you coach.</p>
+
+    <div class="pricing-grid reveal">
+      <div class="price-card">
+        <div class="price-name">Free</div>
+        <div class="price-amount">&euro;0</div>
+        <div class="price-period">/month</div>
+        <div class="price-clients">1 client</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Starter</div>
+        <div class="price-amount">&euro;24</div>
+        <div class="price-period">/month</div>
+        <div class="price-clients">Up to 5 clients</div>
+      </div>
+      <div class="price-card featured">
+        <div class="price-badge">Most Popular</div>
+        <div class="price-name">Growth</div>
+        <div class="price-amount">&euro;44</div>
+        <div class="price-period">/month</div>
+        <div class="price-clients">Up to 15 clients</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Pro</div>
+        <div class="price-amount">&euro;69</div>
+        <div class="price-period">/month</div>
+        <div class="price-clients">Up to 40 clients</div>
+      </div>
+      <div class="price-card">
+        <div class="price-name">Unlimited</div>
+        <div class="price-amount">&euro;99</div>
+        <div class="price-period">/month</div>
+        <div class="price-clients">Unlimited clients</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta" id="waitlist">
+  <div class="container">
+    <h2>Built by a coach.<br>For coaches.</h2>
+    <p>Currently in development. Join the waitlist for early access.</p>
+    <form class="email-form" id="signup-form" onsubmit="handleSubmit(event)">
+      <input type="email" class="email-input" placeholder="your@email.com" required id="email-input">
+      <button type="submit" class="btn-primary" id="submit-btn">Get Early Access</button>
+    </form>
+    <p class="form-note">No spam. Just a heads up when we launch.</p>
+    <p id="success-msg" style="display:none; color: var(--accent); font-weight: 700; margin-top: 16px;">You're on the list! We'll be in touch.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="container">
+    <p><span class="footer-brand">apto</span> &mdash; Smart coaching platform &mdash; &copy; 2026</p>
+  </div>
+</footer>
+
+<script>
+  // Scroll reveal
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+      }
+    });
+  }, { threshold: 0.15 });
+  reveals.forEach(el => observer.observe(el));
+
+  // Toggle switches — click to toggle
+  document.querySelectorAll('.toggle-switch').forEach(toggle => {
+    toggle.addEventListener('click', () => {
+      toggle.classList.toggle('off');
+    });
+  });
+
+  // Email form
+  function handleSubmit(e) {
+    e.preventDefault();
+    const email = document.getElementById('email-input').value;
+    const btn = document.getElementById('submit-btn');
+    const msg = document.getElementById('success-msg');
+    
+     fetch('https://dkotchfyfivgaqkekdvn.supabase.co/rest/v1/waitlist', {
+       method: 'POST',
+       headers: { 'Content-Type': 'application/json', 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb3RjaGZ5Zml2Z2Fxa2VrZHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjQwMjIsImV4cCI6MjA4NzcwMDAyMn0.bSdQsdXtrDTXwMvD9E3RQqAfBATKQR9EYPMusyIGXTA', 'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb3RjaGZ5Zml2Z2Fxa2VrZHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjQwMjIsImV4cCI6MjA4NzcwMDAyMn0.bSdQsdXtrDTXwMvD9E3RQqAfBATKQR9EYPMusyIGXTA' },
+       body: JSON.stringify({ email })
+     });
+    
+    btn.textContent = 'Added!';
+    btn.style.background = '#1a6b3a';
+    msg.style.display = 'block';
+    document.getElementById('email-input').value = '';
+    
+    setTimeout(() => {
+      btn.textContent = 'Get Early Access';
+      btn.style.background = '';
+    }, 3000);
+  }
+
+  // Animate tool items striking through on scroll
+  const toolObserver = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const items = entry.target.querySelectorAll('.tool-item');
+        items.forEach((item, i) => {
+          setTimeout(() => {
+            item.querySelector('.strike').style.transform = 'translateY(-50%) scaleX(1)';
+            item.style.opacity = '0.5';
+          }, i * 200 + 500);
+        });
+      }
+    });
+  }, { threshold: 0.3 });
+  
+  document.querySelectorAll('.tool-stack').forEach(el => toolObserver.observe(el));
+</script>
+
+</body>
+</html>
