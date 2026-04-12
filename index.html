@@ -1,832 +1,372 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Apto — Smart Coaching Platform</title>
-  <meta name="description" content="The depth of spreadsheets. The convenience of an app. One platform for fitness coaches to manage everything.">
-  <link rel="icon" type="image/png" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect x='10' y='10' width='80' height='80' rx='18' fill='%2310422C' stroke='%232ECC71' stroke-width='3'/><polyline points='22,65 35,50 45,55 55,40 65,35 78,22' fill='none' stroke='%232ECC71' stroke-width='4' stroke-linecap='round'/><circle cx='78' cy='22' r='5' fill='%232ECC71'/></svg>">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
-  <style>
-    *, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
-
-    :root {
-      --bg: #0D1117;
-      --surface: #161B22;
-      --card: #1C2128;
-      --accent: #2ECC71;
-      --accent-dim: #1a6b3a;
-      --text: #F0F3F8;
-      --muted: #8B949E;
-      --line: #2C313A;
-      --blue: #3498DB;
-      --yellow: #F1C40F;
-      --orange: #E67E22;
-      --purple: #9B59B6;
-      --red: #E74C3C;
-      --pink: #E91E63;
-    }
-
-    html { scroll-behavior: smooth; }
-
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Plus Jakarta Sans', -apple-system, sans-serif;
-      line-height: 1.6;
-      overflow-x: hidden;
-    }
-
-    /* ========== AMBIENT BACKGROUND ========== */
-    .ambient {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background:
-        radial-gradient(ellipse 600px 400px at 20% 30%, rgba(46,204,113,0.04) 0%, transparent 70%),
-        radial-gradient(ellipse 500px 500px at 80% 70%, rgba(52,152,219,0.03) 0%, transparent 70%);
-    }
-
-    .grid-bg {
-      position: fixed;
-      inset: 0;
-      pointer-events: none;
-      z-index: 0;
-      background-image:
-        linear-gradient(rgba(22,27,34,0.15) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(22,27,34,0.15) 1px, transparent 1px);
-      background-size: 60px 60px;
-      opacity: 0.5;
-    }
-
-    section { position: relative; z-index: 1; }
-
-    .container {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding: 0 24px;
-    }
-
-    /* ========== HERO ========== */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 80px 24px;
-    }
-
-    .logo-icon {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 24px;
-      animation: fadeUp 0.8s ease-out;
-    }
-
-    .logo-text {
-      font-size: 72px;
-      font-weight: 900;
-      letter-spacing: -3px;
-      color: var(--text);
-      animation: fadeUp 0.8s ease-out 0.1s both;
-    }
-
-    .logo-text span { color: var(--accent); }
-
-    .hero-tagline {
-      font-size: 28px;
-      font-weight: 700;
-      color: var(--text);
-      margin-top: 20px;
-      line-height: 1.3;
-      animation: fadeUp 0.8s ease-out 0.2s both;
-    }
-
-    .hero-tagline em {
-      font-style: normal;
-      color: var(--accent);
-    }
-
-    .hero-sub {
-      font-size: 18px;
-      color: var(--muted);
-      margin-top: 12px;
-      max-width: 500px;
-      animation: fadeUp 0.8s ease-out 0.3s both;
-    }
-
-    .hero-cta {
-      margin-top: 40px;
-      display: flex;
-      gap: 16px;
-      flex-wrap: wrap;
-      justify-content: center;
-      animation: fadeUp 0.8s ease-out 0.4s both;
-    }
-
-    .btn-primary {
-      background: var(--accent);
-      color: var(--bg);
-      font-weight: 800;
-      font-size: 16px;
-      padding: 14px 32px;
-      border-radius: 12px;
-      border: none;
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    .btn-primary:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 8px 30px rgba(46,204,113,0.3);
-    }
-
-    .btn-secondary {
-      background: transparent;
-      color: var(--accent);
-      font-weight: 700;
-      font-size: 16px;
-      padding: 14px 32px;
-      border-radius: 12px;
-      border: 1px solid var(--accent);
-      cursor: pointer;
-      text-decoration: none;
-      transition: all 0.2s;
-      font-family: inherit;
-    }
-
-    .btn-secondary:hover {
-      background: rgba(46,204,113,0.1);
-    }
-
-    .scroll-hint {
-      position: absolute;
-      bottom: 40px;
-      left: 50%;
-      transform: translateX(-50%);
-      color: var(--muted);
-      font-size: 13px;
-      animation: bounce 2s infinite;
-    }
-
-    /* ========== PROBLEM ========== */
-    .problem {
-      padding: 100px 24px;
-    }
-
-    .problem-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
-    }
-
-    .problem-left h2 {
-      font-size: 36px;
-      font-weight: 900;
-      line-height: 1.2;
-      margin-bottom: 20px;
-    }
-
-    .problem-left h2 span { color: var(--red); }
-
-    .problem-left p {
-      color: var(--muted);
-      font-size: 16px;
-      line-height: 1.7;
-    }
-
-    .tool-stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .tool-item {
-      display: flex;
-      align-items: center;
-      gap: 14px;
-      padding: 14px 20px;
-      background: var(--surface);
-      border-radius: 14px;
-      border: 1px solid var(--line);
-      position: relative;
-      overflow: hidden;
-    }
-
-    .tool-item .strike {
-      position: absolute;
-      top: 50%;
-      left: 16px;
-      right: 16px;
-      height: 2px;
-      background: var(--red);
-      transform: translateY(-50%) scaleX(0);
-      transform-origin: left;
-      transition: transform 0.6s ease-out;
-    }
-
-    .tool-item.struck .strike { transform: translateY(-50%) scaleX(1); }
-    .tool-item.struck { opacity: 0.5; }
-
-    .tool-icon { font-size: 22px; }
-    .tool-text { color: var(--text); font-weight: 600; font-size: 15px; }
-
-    /* ========== FEATURES ========== */
-    .features {
-      padding: 100px 24px;
-    }
-
-    .section-label {
-      color: var(--accent);
-      font-size: 14px;
-      font-weight: 700;
-      letter-spacing: 3px;
-      text-transform: uppercase;
-      text-align: center;
-      margin-bottom: 12px;
-    }
-
-    .section-title {
-      font-size: 36px;
-      font-weight: 900;
-      text-align: center;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .section-subtitle {
-      color: var(--muted);
-      font-size: 17px;
-      text-align: center;
-      max-width: 600px;
-      margin: 0 auto 60px;
-    }
-
-    .feature-grid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 20px;
-    }
-
-    .feature-card {
-      background: var(--surface);
-      border-radius: 18px;
-      padding: 28px 24px;
-      border: 1px solid var(--line);
-      transition: all 0.3s;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .feature-card::before {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 4px;
-      height: 100%;
-      border-radius: 0 4px 4px 0;
-    }
-
-    .feature-card:nth-child(1)::before { background: var(--accent); }
-    .feature-card:nth-child(2)::before { background: var(--yellow); }
-    .feature-card:nth-child(3)::before { background: var(--blue); }
-    .feature-card:nth-child(4)::before { background: var(--purple); }
-    .feature-card:nth-child(5)::before { background: var(--orange); }
-    .feature-card:nth-child(6)::before { background: var(--red); }
-
-    .feature-card:hover {
-      transform: translateY(-4px);
-      border-color: var(--accent);
-      box-shadow: 0 12px 40px rgba(0,0,0,0.3);
-    }
-
-    .feature-icon {
-      font-size: 28px;
-      margin-bottom: 14px;
-    }
-
-    .feature-title {
-      font-size: 17px;
-      font-weight: 800;
-      margin-bottom: 8px;
-    }
-
-    .feature-desc {
-      color: var(--muted);
-      font-size: 14px;
-      line-height: 1.6;
-    }
-
-    /* ========== USP ========== */
-    .usp {
-      padding: 100px 24px;
-    }
-
-    .usp-card {
-      background: var(--surface);
-      border-radius: 24px;
-      padding: 60px;
-      border: 1px solid var(--line);
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 50px;
-      align-items: center;
-      position: relative;
-      overflow: hidden;
-    }
-
-    .usp-card::before {
-      content: '';
-      position: absolute;
-      top: -100px;
-      right: -100px;
-      width: 300px;
-      height: 300px;
-      background: radial-gradient(circle, rgba(46,204,113,0.08) 0%, transparent 70%);
-      border-radius: 50%;
-    }
-
-    .usp-left h2 {
-      font-size: 32px;
-      font-weight: 900;
-      margin-bottom: 16px;
-      line-height: 1.2;
-    }
-
-    .usp-counter {
-      font-size: 64px;
-      font-weight: 900;
-      color: var(--accent);
-      line-height: 1;
-      margin-bottom: 8px;
-    }
-
-    .usp-counter-label {
-      color: var(--muted);
-      font-size: 18px;
-      margin-bottom: 20px;
-    }
-
-    .usp-left p {
-      color: var(--muted);
-      font-size: 15px;
-      line-height: 1.7;
-    }
-
-    .usp-toggles {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .toggle-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 12px 18px;
-      background: var(--card);
-      border-radius: 12px;
-    }
-
-    .toggle-label { font-weight: 600; font-size: 14px; }
-
-    .toggle-switch {
-      width: 40px;
-      height: 22px;
-      border-radius: 11px;
-      background: var(--accent);
-      position: relative;
-      cursor: pointer;
-    }
-
-    .toggle-switch::after {
-      content: '';
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: white;
-      position: absolute;
-      top: 2px;
-      right: 2px;
-      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    }
-
-    .toggle-switch.off {
-      background: var(--line);
-    }
-
-    .toggle-switch.off::after {
-      right: auto;
-      left: 2px;
-    }
-
-    /* ========== PRICING ========== */
-    .pricing {
-      padding: 100px 24px;
-    }
-
-    .pricing-grid {
-      display: grid;
-      grid-template-columns: repeat(5, 1fr);
-      gap: 16px;
-    }
-
-    .price-card {
-      background: var(--surface);
-      border-radius: 18px;
-      padding: 28px 20px;
-      text-align: center;
-      border: 1px solid var(--line);
-      transition: all 0.3s;
-    }
-
-    .price-card.featured {
-      border-color: var(--accent);
-      background: linear-gradient(135deg, var(--surface) 0%, rgba(46,204,113,0.05) 100%);
-      transform: scale(1.04);
-    }
-
-    .price-card:hover { transform: translateY(-4px); }
-    .price-card.featured:hover { transform: scale(1.04) translateY(-4px); }
-
-    .price-name { font-weight: 800; font-size: 16px; margin-bottom: 8px; }
-    .price-amount { font-size: 32px; font-weight: 900; color: var(--accent); }
-    .price-period { color: var(--muted); font-size: 13px; margin-bottom: 10px; }
-    .price-clients { color: var(--muted); font-size: 14px; }
-    .price-badge {
-      display: inline-block;
-      background: var(--accent);
-      color: var(--bg);
-      font-size: 11px;
-      font-weight: 800;
-      padding: 3px 10px;
-      border-radius: 20px;
-      margin-bottom: 12px;
-    }
-
-    /* ========== CTA ========== */
-    .cta {
-      padding: 100px 24px 120px;
-      text-align: center;
-    }
-
-    .cta h2 {
-      font-size: 40px;
-      font-weight: 900;
-      margin-bottom: 12px;
-    }
-
-    .cta p {
-      color: var(--muted);
-      font-size: 18px;
-      margin-bottom: 40px;
-    }
-
-    .email-form {
-      display: flex;
-      gap: 12px;
-      justify-content: center;
-      max-width: 480px;
-      margin: 0 auto;
-    }
-
-    .email-input {
-      flex: 1;
-      padding: 14px 20px;
-      border-radius: 12px;
-      border: 1px solid var(--line);
-      background: var(--surface);
-      color: var(--text);
-      font-size: 15px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color 0.2s;
-    }
-
-    .email-input:focus { border-color: var(--accent); }
-    .email-input::placeholder { color: var(--muted); }
-
-    .form-note {
-      color: var(--muted);
-      font-size: 13px;
-      margin-top: 12px;
-    }
-
-    /* ========== FOOTER ========== */
-    .footer {
-      padding: 30px 24px;
-      text-align: center;
-      border-top: 1px solid var(--line);
-    }
-
-    .footer p {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .footer-brand {
-      color: var(--accent);
-      font-weight: 800;
-    }
-
-    /* ========== ANIMATIONS ========== */
-    @keyframes fadeUp {
-      from { opacity: 0; transform: translateY(20px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-
-    @keyframes bounce {
-      0%, 100% { transform: translateX(-50%) translateY(0); }
-      50% { transform: translateX(-50%) translateY(8px); }
-    }
-
-    .reveal {
-      opacity: 0;
-      transform: translateY(30px);
-      transition: all 0.7s ease-out;
-    }
-
-    .reveal.visible {
-      opacity: 1;
-      transform: translateY(0);
-    }
-
-    /* ========== RESPONSIVE ========== */
-    @media (max-width: 768px) {
-      .logo-text { font-size: 48px; }
-      .hero-tagline { font-size: 22px; }
-      .problem-grid { grid-template-columns: 1fr; gap: 40px; }
-      .feature-grid { grid-template-columns: 1fr; }
-      .usp-card { grid-template-columns: 1fr; padding: 36px 24px; }
-      .pricing-grid { grid-template-columns: repeat(2, 1fr); }
-      .price-card.featured { transform: scale(1); }
-      .email-form { flex-direction: column; }
-      .section-title { font-size: 28px; }
-      .cta h2 { font-size: 30px; }
-    }
-  </style>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Apto — Coaching platform for serious coaches</title>
+<meta name="description" content="Training, nutrition, check-ins, progress — one platform. Built by a bodybuilding coach who got tired of spreadsheets.">
+<meta property="og:title" content="Apto — Coaching platform for serious coaches">
+<meta property="og:description" content="Training, nutrition, check-ins, progress — one platform. Built by a coach.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:opsz,wght@9..40,300;9..40,400;9..40,500;9..40,600;9..40,700&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --bg:#070A0E;--s1:#0C1017;--s2:#111720;--s3:#161D27;
+  --b1:#1A2130;--b2:#222A36;
+  --g:#2ECC71;--gd:rgba(46,204,113,.07);--gg:rgba(46,204,113,.035);
+  --t:#ECF2F8;--t2:#B8C4D0;--t3:#7E8C9A;--t4:#4A5568;--t5:#2D3748;
+  --r:#F85149;
+}
+html{scroll-behavior:smooth}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--t);-webkit-font-smoothing:antialiased;overflow-x:hidden}
+h1,h2,h3,h4{font-family:'Syne',sans-serif;font-weight:700;line-height:1.08}
+img{display:block;max-width:100%}
+a{text-decoration:none}
+
+body::after{content:'';position:fixed;inset:0;opacity:.015;background:url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");pointer-events:none;z-index:9999}
+
+.w{max-width:1100px;margin:0 auto;padding:0 1.5rem}
+
+/* ── nav ── */
+nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:.65rem 1.5rem;display:flex;align-items:center;justify-content:space-between;backdrop-filter:blur(20px) saturate(1.3);background:rgba(7,10,14,.9);border-bottom:1px solid rgba(26,33,48,.4)}
+.logo{display:flex;align-items:center;gap:.45rem}
+.logo svg{width:24px;height:24px}
+.logo b{font-family:'Syne';font-weight:800;font-size:1.1rem;color:var(--t);letter-spacing:-.03em}
+.nr{display:flex;align-items:center;gap:1rem}
+.nr>a{color:var(--t3);font-size:.8rem;font-weight:500;transition:color .15s}
+.nr>a:hover{color:var(--t)}
+.b{display:inline-flex;align-items:center;justify-content:center;padding:.55rem 1.15rem;font-family:'DM Sans';font-weight:700;font-size:.8rem;border-radius:6px;border:none;cursor:pointer;transition:all .15s}
+.bg{background:var(--g);color:#070A0E}
+.bg:hover{box-shadow:0 4px 20px rgba(46,204,113,.2);transform:translateY(-1px)}
+.bo{background:0;color:var(--t2);border:1px solid var(--b1)}
+.bo:hover{background:var(--s2);border-color:var(--b2)}
+
+/* ── hero ── */
+.hero{padding:9rem 1.5rem 2rem;position:relative}
+.hero::before{content:'';position:absolute;top:-80px;left:40%;width:600px;height:600px;background:radial-gradient(circle,var(--gg),transparent 60%);pointer-events:none}
+.hero-inner{max-width:520px;position:relative;z-index:2}
+.pill{display:inline-flex;align-items:center;gap:.4rem;padding:.25rem .7rem;border-radius:50px;background:var(--gd);border:1px solid rgba(46,204,113,.1);color:var(--g);font-size:.68rem;font-weight:700;letter-spacing:.03em;margin-bottom:1.5rem}
+.pill i{width:5px;height:5px;border-radius:50%;background:var(--g);animation:blink 2.5s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.25}}
+
+.hero h1{font-size:clamp(2.2rem,5.2vw,3.8rem);font-weight:800;letter-spacing:-.04em;margin-bottom:1.25rem;line-height:1.06}
+.hero h1 .hi{background:linear-gradient(135deg,var(--g),#1DB954);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero .desc{font-size:clamp(.88rem,1.5vw,1.02rem);color:var(--t3);max-width:420px;line-height:1.75;margin-bottom:2rem}
+
+.hform{display:flex;gap:.35rem;max-width:380px}
+.hform input{flex:1;padding:.7rem .9rem;background:var(--s2);border:1px solid var(--b1);border-radius:6px;color:var(--t);font-family:'DM Sans';font-size:.85rem;outline:0;transition:border .15s}
+.hform input:focus{border-color:var(--g)}
+.hform input::placeholder{color:var(--t4)}
+.hnote{font-size:.68rem;color:var(--t4);margin-top:.5rem}
+
+.hero-shot{position:absolute;top:7.5rem;right:-3rem;width:60%;max-width:700px;z-index:1}
+.shot{border-radius:10px;overflow:hidden;border:1px solid var(--b1);box-shadow:0 32px 72px rgba(0,0,0,.5),0 0 0 1px rgba(255,255,255,.015)}
+.shot img{width:100%}
+
+/* ── stats strip ── */
+.stats{padding:2.5rem 0;border-top:1px solid rgba(26,33,48,.5);border-bottom:1px solid rgba(26,33,48,.5)}
+.stats-row{display:flex;justify-content:space-between;flex-wrap:wrap;gap:1.5rem}
+.stat{flex:1;min-width:140px;text-align:center}
+.stat .v{font-family:'Syne';font-size:1.5rem;font-weight:800;color:var(--g);letter-spacing:-.01em}
+.stat .l{font-size:.72rem;color:var(--t4);margin-top:.15rem;font-weight:500}
+
+/* ── feature sections ── */
+.feat{padding:5rem 0}
+.feat-row{display:grid;grid-template-columns:1fr 1fr;gap:3.5rem;align-items:center;margin-bottom:5rem}
+.feat-row:last-child{margin-bottom:0}
+.feat-row.r{direction:rtl}
+.feat-row.r>*{direction:ltr}
+
+.ft .tag{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.18em;color:var(--g);margin-bottom:.5rem}
+.ft h2{font-size:clamp(1.3rem,2.8vw,2rem);letter-spacing:-.025em;margin-bottom:.5rem}
+.ft p{font-size:.9rem;color:var(--t3);line-height:1.7;margin-bottom:1.25rem;max-width:420px}
+.ft ul{list-style:none;display:flex;flex-direction:column;gap:.45rem}
+.ft li{font-size:.83rem;color:var(--t3);display:flex;align-items:baseline;gap:.5rem}
+.ft li::before{content:'→';color:var(--g);font-weight:700;font-size:.75rem}
+.fi{border-radius:10px;overflow:hidden;border:1px solid var(--b1);box-shadow:0 20px 56px rgba(0,0,0,.4)}
+.fi img{width:100%}
+
+/* ── mobile ── */
+.mob{padding:5rem 0;text-align:center;background:linear-gradient(180deg,var(--bg) 0%,var(--s1) 40%,var(--bg) 100%)}
+.mob .tag{font-size:.62rem;font-weight:800;text-transform:uppercase;letter-spacing:.18em;color:var(--g);margin-bottom:.5rem}
+.mob h2{font-size:clamp(1.4rem,3vw,2.2rem);letter-spacing:-.02em;margin-bottom:.5rem}
+.mob .desc{font-size:.9rem;color:var(--t3);max-width:400px;margin:0 auto 2.5rem;line-height:1.7}
+.phones{display:flex;justify-content:center;gap:1.25rem;flex-wrap:wrap}
+.ph{width:185px;flex-shrink:0}
+.phf{border-radius:18px;overflow:hidden;border:2px solid var(--b1);box-shadow:0 14px 40px rgba(0,0,0,.4);transition:transform .25s}
+.phf:hover{transform:translateY(-5px)}
+.phf img{width:100%}
+.phl{font-size:.7rem;color:var(--t4);margin-top:.6rem;font-weight:600;letter-spacing:.02em}
+
+/* ── features grid ── */
+.fgrid{padding:4rem 0;border-top:1px solid rgba(26,33,48,.5)}
+.fgrid .tag{margin-bottom:.5rem}
+.fgrid h2{margin-bottom:2rem}
+.grid9{display:grid;grid-template-columns:repeat(3,1fr);gap:.9rem}
+.gc{padding:1.3rem;background:var(--s1);border:1px solid var(--b1);border-radius:10px;transition:border-color .2s}
+.gc:hover{border-color:rgba(46,204,113,.15)}
+.gc .em{font-size:1rem;margin-bottom:.5rem}
+.gc h4{font-size:.84rem;margin-bottom:.2rem;font-weight:700}
+.gc p{font-size:.75rem;color:var(--t3);line-height:1.6}
+
+/* ── pricing ── */
+.pri{padding:5rem 0;border-top:1px solid rgba(26,33,48,.5);text-align:center}
+.pgrid{display:grid;grid-template-columns:repeat(5,1fr);gap:.55rem;margin-top:2rem;max-width:920px;margin-left:auto;margin-right:auto}
+.pc{background:var(--s1);border:1px solid var(--b1);border-radius:10px;padding:1.4rem .7rem;position:relative;transition:all .2s}
+.pc:hover{transform:translateY(-2px)}
+.pc.hl{border-color:var(--g);box-shadow:0 0 32px var(--gg)}
+.pc.hl::before{content:'Popular';position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--g);color:#070A0E;font-size:.58rem;font-weight:800;padding:.15rem .55rem;border-radius:50px;text-transform:uppercase;letter-spacing:.04em}
+.pc h3{font-size:.82rem;margin-bottom:.5rem}
+.pc .pr{font-family:'Syne';font-size:1.7rem;font-weight:800}
+.pc .pr span{font-size:.7rem;font-weight:400;color:var(--t3)}
+.pc .cl{font-size:.7rem;color:var(--t4);margin:.3rem 0 .9rem}
+.pn{font-size:.78rem;color:var(--t3);margin-top:1rem}
+.pn strong{color:var(--g)}
+.ps{font-size:.7rem;color:var(--t4);margin-top:.3rem}
+
+/* ── quote ── */
+.quote{padding:4rem 0;border-top:1px solid rgba(26,33,48,.5)}
+.quote-inner{max-width:600px;margin:0 auto;text-align:center}
+.quote-inner p{font-size:1.05rem;color:var(--t2);line-height:1.8;font-style:italic;margin-bottom:.75rem}
+.quote-inner .who{font-size:.8rem;color:var(--t4);font-style:normal}
+
+/* ── cta ── */
+.cta{padding:6rem 0;text-align:center;position:relative}
+.cta::before{content:'';position:absolute;bottom:0;left:50%;width:500px;height:500px;transform:translateX(-50%);background:radial-gradient(circle,var(--gg),transparent 60%);pointer-events:none}
+.cta h2{font-size:clamp(1.5rem,3.2vw,2.4rem);letter-spacing:-.02em;margin-bottom:.6rem}
+.cta .desc{font-size:.95rem;color:var(--t3);max-width:380px;margin:0 auto 2rem}
+.cform{display:flex;gap:.35rem;max-width:400px;margin:0 auto}
+.cform input{flex:1;padding:.7rem .9rem;background:var(--s2);border:1px solid var(--b1);border-radius:6px;color:var(--t);font-family:'DM Sans';font-size:.85rem;outline:0;transition:border .15s}
+.cform input:focus{border-color:var(--g)}
+.cform input::placeholder{color:var(--t4)}
+
+/* ── footer ── */
+footer{padding:2rem 0;border-top:1px solid rgba(26,33,48,.5)}
+footer .inner{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:.75rem}
+footer .c{font-size:.7rem;color:var(--t5)}
+footer .fl{display:flex;gap:1rem}
+footer .fl a{font-size:.7rem;color:var(--t4);transition:color .15s}
+footer .fl a:hover{color:var(--t3)}
+
+/* ── toast + success ── */
+.toast{position:fixed;bottom:1.5rem;left:50%;transform:translateX(-50%) translateY(80px);background:var(--g);color:#070A0E;padding:.55rem 1.1rem;border-radius:7px;font-weight:700;font-size:.82rem;z-index:10000;transition:transform .3s cubic-bezier(.2,.9,.3,1.2);pointer-events:none}
+.toast.on{transform:translateX(-50%) translateY(0)}
+.ok{display:none;padding:.6rem 0}
+.ok .ic{width:36px;height:36px;border-radius:50%;background:var(--gd);display:flex;align-items:center;justify-content:center;margin:0 auto .5rem;font-size:1.1rem;color:var(--g)}
+.ok h3{font-size:.95rem;margin-bottom:.15rem}
+.ok p{font-size:.78rem;color:var(--t3)}
+.cta .ok{color:var(--t)}
+
+/* ── reveal ── */
+.rv{opacity:0;transform:translateY(18px);transition:opacity .5s,transform .5s}
+.rv.vis{opacity:1;transform:none}
+
+/* ── responsive ── */
+@media(max-width:1000px){
+  .hero-shot{position:static;width:100%;max-width:100%;margin-top:2.5rem}
+  .hero-inner{max-width:100%}
+  .feat-row,.feat-row.r{grid-template-columns:1fr;direction:ltr;gap:2rem}
+  .feat-row.r>*{direction:ltr}
+}
+@media(max-width:800px){
+  .grid9{grid-template-columns:repeat(2,1fr)}
+  .pgrid{grid-template-columns:repeat(2,1fr)}
+  .phones{gap:.8rem}.ph{width:150px}
+  .nr>a:not(.b){display:none}
+}
+@media(max-width:550px){
+  .grid9{grid-template-columns:1fr}
+  .pgrid{grid-template-columns:1fr}
+  .hform,.cform{flex-direction:column}
+  .ph{width:130px}
+  .stats-row{gap:1rem}
+}
+</style>
 </head>
 <body>
 
-<div class="ambient"></div>
-<div class="grid-bg"></div>
-
-<!-- HERO -->
-<section class="hero">
-  <svg class="logo-icon" viewBox="0 0 100 100">
-    <rect x="10" y="10" width="80" height="80" rx="18" fill="#10422C" stroke="#2ECC71" stroke-width="3"/>
-    <polyline points="22,65 35,50 45,55 55,40 65,35 78,22" fill="none" stroke="#2ECC71" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
-    <circle cx="78" cy="22" r="5" fill="#2ECC71"/>
-    <circle cx="78" cy="22" r="3" fill="#80E6A8"/>
-  </svg>
-  <div class="logo-text">apto</div>
-  <div class="hero-tagline">The depth of spreadsheets.<br><em>The convenience of an app.</em></div>
-  <p class="hero-sub">One platform for fitness coaches to manage clients, training, nutrition, check-ins, body composition, and everything in between.</p>
-  <div class="hero-cta">
-    <a href="#waitlist" class="btn-primary">Join the Waitlist</a>
-    <a href="#features" class="btn-secondary">See Features</a>
+<nav>
+  <a href="#" class="logo"><svg viewBox="0 0 32 32" fill="none"><rect width="32" height="32" rx="8" fill="#2ECC71"/><path d="M10 22L16 10L22 22" stroke="#070A0E" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18H20" stroke="#070A0E" stroke-width="2.5" stroke-linecap="round"/></svg><b>apto</b></a>
+  <div class="nr">
+    <a href="#features">Features</a>
+    <a href="#pricing">Pricing</a>
+    <a href="https://getapto.com/#/login" class="b bo">Log in</a>
+    <a href="#top" class="b bg">Get early access</a>
   </div>
-  <div class="scroll-hint">↓ Scroll to explore</div>
+</nav>
+
+<section class="hero" id="top">
+  <div class="hero-inner">
+    <div class="pill"><i></i> Beta — founding coaches get lifetime pricing</div>
+    <h1>Your coaching deserves better than a <span class="hi">spreadsheet</span></h1>
+    <p class="desc">Training, nutrition, check-ins, progress, messaging — one platform. Every feature at every tier. Built by a coach for coaches.</p>
+    <div class="hform" id="hf">
+      <input type="email" id="he" placeholder="your@email.com">
+      <button class="b bg" onclick="go('he','hf','hs')">Get early access</button>
+    </div>
+    <div class="ok" id="hs"><div class="ic">✓</div><h3>You're in.</h3><p>Founding coach invite incoming.</p></div>
+    <p class="hnote">Free tier available · No credit card</p>
+  </div>
+  <div class="hero-shot"><div class="shot"><img src="img/dashboard.png" alt="Apto coach dashboard" loading="eager"></div></div>
 </section>
 
-<!-- PROBLEM -->
-<section class="problem">
-  <div class="container">
-    <div class="problem-grid">
-      <div class="problem-left reveal">
-        <h2>Your coaching "stack" is <span>broken</span>.</h2>
-        <p>You're juggling 3-5 tools to manage each client. Spreadsheets for tracking, WhatsApp for check-ins, a separate app for programming, another for nutrition. Data everywhere. Nothing connected. Hours wasted on admin instead of coaching.</p>
+<div class="stats">
+  <div class="w">
+    <div class="stats-row">
+      <div class="stat"><div class="v">878+</div><div class="l">Exercises with images</div></div>
+      <div class="stat"><div class="v">100%</div><div class="l">Customizable per client</div></div>
+      <div class="stat"><div class="v">All features</div><div class="l">Every pricing tier</div></div>
+      <div class="stat"><div class="v">Coach + Client</div><div class="l">Web dashboard + mobile app</div></div>
+    </div>
+  </div>
+</div>
+
+<section class="feat" id="features">
+  <div class="w">
+
+    <div class="feat-row rv">
+      <div class="ft">
+        <div class="tag">Client intelligence</div>
+        <h2>Everything without asking</h2>
+        <p>Weight, macros, compliance, sleep, energy, training status — one overview. Stop digging through chat history to understand where a client is at.</p>
+        <ul>
+          <li>7-day rolling averages for weight, calories, protein</li>
+          <li>Visual compliance streaks and weekly schedule</li>
+          <li>One-click access to body comp, bloodwork, photos, messaging</li>
+        </ul>
       </div>
-      <div class="tool-stack reveal">
-        <div class="tool-item struck">
-          <span class="tool-icon">📊</span>
-          <span class="tool-text">Google Sheets for tracking</span>
-          <div class="strike"></div>
-        </div>
-        <div class="tool-item struck">
-          <span class="tool-icon">📱</span>
-          <span class="tool-text">WhatsApp for check-in photos</span>
-          <div class="strike"></div>
-        </div>
-        <div class="tool-item struck">
-          <span class="tool-icon">🍎</span>
-          <span class="tool-text">MyFitnessPal for nutrition</span>
-          <div class="strike"></div>
-        </div>
-        <div class="tool-item struck">
-          <span class="tool-icon">📋</span>
-          <span class="tool-text">Excel for programs</span>
-          <div class="strike"></div>
-        </div>
-        <div class="tool-item struck">
-          <span class="tool-icon">📧</span>
-          <span class="tool-text">Email for onboarding</span>
-          <div class="strike"></div>
-        </div>
+      <div class="fi"><img src="img/overview.png" alt="Client overview" loading="lazy"></div>
+    </div>
+
+    <div class="feat-row r rv">
+      <div class="ft">
+        <div class="tag">Training log</div>
+        <h2>See what they actually did</h2>
+        <p>Every set, rep, and weight — prescribed vs actual. Week-over-week comparison with deltas. No more asking for workout screenshots.</p>
+        <ul>
+          <li>Exercise-by-exercise prescribed vs logged comparison</li>
+          <li>One-click compare mode with weight deltas</li>
+          <li>Volume trend chart over 8+ weeks</li>
+        </ul>
       </div>
+      <div class="fi"><img src="img/compare.png" alt="Training comparison" loading="lazy"></div>
+    </div>
+
+    <div class="feat-row rv">
+      <div class="ft">
+        <div class="tag">In-app messaging</div>
+        <h2>Ditch WhatsApp</h2>
+        <p>All client communication in one place. Weekly feedback attached to their check-in data. File sharing. Everything linked to the client profile.</p>
+        <ul>
+          <li>Conversation history per client, not scattered across groups</li>
+          <li>Automatic weekly feedback cards from check-in data</li>
+          <li>Attachments and file sharing built in</li>
+        </ul>
+      </div>
+      <div class="fi"><img src="img/inbox.png" alt="Messaging" loading="lazy"></div>
+    </div>
+
+  </div>
+</section>
+
+<section class="mob rv">
+  <div class="w">
+    <div class="tag">Client experience</div>
+    <h2>An app they'll actually open</h2>
+    <p class="desc">Clean. Dark. Fast. Check in, view plans, log workouts, track progress. Takes 30 seconds a day.</p>
+    <div class="phones">
+      <div class="ph"><div class="phf"><img src="img/m-home.png" alt="Home" loading="lazy"></div><div class="phl">Home</div></div>
+      <div class="ph"><div class="phf"><img src="img/m-training.png" alt="Training" loading="lazy"></div><div class="phl">Training</div></div>
+      <div class="ph"><div class="phf"><img src="img/m-nutrition.png" alt="Nutrition" loading="lazy"></div><div class="phl">Nutrition</div></div>
+      <div class="ph"><div class="phf"><img src="img/m-checkin.png" alt="Check-in" loading="lazy"></div><div class="phl">Check-in</div></div>
     </div>
   </div>
 </section>
 
-<!-- FEATURES -->
-<section class="features" id="features">
-  <div class="container">
-    <div class="section-label reveal">Everything in one place</div>
-    <h2 class="section-title reveal">Built for how coaches actually work.</h2>
-    <p class="section-subtitle reveal">Every feature designed by a coach who was tired of the same fragmented workflow.</p>
-
-    <div class="feature-grid">
-      <div class="feature-card reveal">
-        <div class="feature-icon">🎯</div>
-        <div class="feature-title">Per-Client Check-ins</div>
-        <div class="feature-desc">34+ individually toggleable check-in fields. Configure exactly what each client tracks. No other platform does this.</div>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">📊</div>
-        <div class="feature-title">Trends & Analytics</div>
-        <div class="feature-desc">Weight, nutrition, wellness charts with time-range filtering. Color-coded dot ratings for instant visual scanning.</div>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">📐</div>
-        <div class="feature-title">Body Composition</div>
-        <div class="feature-desc">Skinfold measurements with auto body fat calculation. Jackson-Pollock, Durnin-Womersley formulas built in.</div>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">💪</div>
-        <div class="feature-title">Training Plans</div>
-        <div class="feature-desc">878+ exercises with images. Build programs, assign to clients, edit per-client. Workout logging with rest timer.</div>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">🥗</div>
-        <div class="feature-title">Nutrition Plans</div>
-        <div class="feature-desc">Diet plans with Training/Rest/Flex day types. FatSecret food database integration. Auto macro calculation.</div>
-      </div>
-      <div class="feature-card reveal">
-        <div class="feature-icon">🩸</div>
-        <div class="feature-title">Bloodwork Tracking</div>
-        <div class="feature-desc">18 lab markers with normal range indicators. Track hormones, lipids, liver enzymes, metabolic markers over time.</div>
-      </div>
+<section class="fgrid rv" id="allfeatures">
+  <div class="w">
+    <div class="tag">The full picture</div>
+    <h2>Everything you're doing across 5 apps — in one</h2>
+    <div class="grid9">
+      <div class="gc"><div class="em">🏋️</div><h4>Training Programs</h4><p>Multi-day splits. Sets, reps, RIR, tempo, rest. Weekly periodization. 878+ exercises with images.</p></div>
+      <div class="gc"><div class="em">🍽️</div><h4>Nutrition Plans</h4><p>Full diet or macro-only. Training/rest splits. FatSecret + Open Food Facts + your own custom food library.</p></div>
+      <div class="gc"><div class="em">✅</div><h4>Daily Check-ins</h4><p>Weight, sleep, energy, hunger, cravings, performance — fully customizable per client. Takes 30 seconds.</p></div>
+      <div class="gc"><div class="em">📈</div><h4>Training Log</h4><p>Prescribed vs actual. Week comparison with deltas. Volume trends. Exercise-level detail.</p></div>
+      <div class="gc"><div class="em">📊</div><h4>Progress Tracking</h4><p>Weight trends, body comp, measurements, progress photos, bloodwork markers. All charted.</p></div>
+      <div class="gc"><div class="em">💬</div><h4>Messaging</h4><p>In-app chat. File sharing. Weekly feedback cards. No more WhatsApp.</p></div>
+      <div class="gc"><div class="em">🔬</div><h4>Micronutrients</h4><p>Iron, vitamin D, fiber, sodium — per-client targets with alerts when off track.</p></div>
+      <div class="gc"><div class="em">📅</div><h4>Calendar</h4><p>Check-ins, consults, assessments, follow-ups. Color-coded month grid.</p></div>
+      <div class="gc"><div class="em">🎨</div><h4>White-Label</h4><p>Your accent color. Your brand. Clients see you, not us. €199 one-time add-on.</p></div>
     </div>
   </div>
 </section>
 
-<!-- USP -->
-<section class="usp">
-  <div class="container">
-    <div class="usp-card reveal">
-      <div class="usp-left">
-        <div class="section-label" style="text-align:left">What makes Apto different</div>
-        <h2>Every client is unique.<br>Their app should be too.</h2>
-        <div class="usp-counter" id="counter">34+</div>
-        <div class="usp-counter-label">toggleable fields per client</div>
-        <p>A bodybuilding competitor needs skinfold tracking. A general fitness client doesn't. With Apto, coaches configure exactly what each client sees and tracks. Three levels of control: global defaults, coach preferences, per-client overrides.</p>
-      </div>
-      <div class="usp-toggles">
-        <div class="toggle-row"><span class="toggle-label">Macro Tracking</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Sleep Quality</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Muscle Soreness</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Bloodwork</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Skinfold Measurements</span><div class="toggle-switch off"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Progress Photos</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Stress Levels</span><div class="toggle-switch"></div></div>
-        <div class="toggle-row"><span class="toggle-label">Cycle Tracker</span><div class="toggle-switch off"></div></div>
-      </div>
+<section class="pri rv" id="pricing">
+  <div class="w">
+    <div class="tag">Pricing</div>
+    <h2>All features. Every plan.</h2>
+    <p style="font-size:.88rem;color:var(--t3);max-width:380px;margin:.4rem auto 0">Only difference is client count. Every feature unlocked from day one.</p>
+    <div class="pgrid">
+      <div class="pc"><h3>Free</h3><div class="pr">€0<span>/mo</span></div><div class="cl">1 client</div><a href="#top" class="b bo" style="width:100%;font-size:.75rem">Start free</a></div>
+      <div class="pc"><h3>Starter</h3><div class="pr">€24<span>/mo</span></div><div class="cl">5 clients</div><a href="#top" class="b bo" style="width:100%;font-size:.75rem">Get started</a></div>
+      <div class="pc hl"><h3>Growth</h3><div class="pr">€44<span>/mo</span></div><div class="cl">15 clients</div><a href="#top" class="b bg" style="width:100%;font-size:.75rem">Get started</a></div>
+      <div class="pc"><h3>Pro</h3><div class="pr">€69<span>/mo</span></div><div class="cl">40 clients</div><a href="#top" class="b bo" style="width:100%;font-size:.75rem">Get started</a></div>
+      <div class="pc"><h3>Unlimited</h3><div class="pr">€99<span>/mo</span></div><div class="cl">Unlimited</div><a href="#top" class="b bo" style="width:100%;font-size:.75rem">Get started</a></div>
+    </div>
+    <p class="pn"><strong>Founding coaches</strong> lock in their price forever.</p>
+  </div>
+</section>
+
+<section class="quote rv">
+  <div class="w">
+    <div class="quote-inner">
+      <p>"I built Apto because I was coaching from spreadsheets and WhatsApp like everyone else. I got tired of it. So I built the tool I actually wanted to use."</p>
+      <div class="who">— Matthias, founder & bodybuilding coach</div>
     </div>
   </div>
 </section>
 
-<!-- PRICING -->
-<section class="pricing" id="pricing">
-  <div class="container">
-    <div class="section-label reveal">Simple pricing</div>
-    <h2 class="section-title reveal">All features included. Always.</h2>
-    <p class="section-subtitle reveal">No feature gates. No hidden costs. Just pay for how many clients you coach.</p>
+<section class="cta">
+  <h2 class="rv">Ready to coach properly?</h2>
+  <p class="desc rv">Join the beta. Free to start. No card required.</p>
+  <div class="cform rv" id="cf">
+    <input type="email" id="ce" placeholder="your@email.com">
+    <button class="b bg" onclick="go('ce','cf','cs')">Get early access →</button>
+  </div>
+  <div class="ok" id="cs"><div class="ic">✓</div><h3>You're in.</h3><p>Founding coach invite incoming.</p></div>
+</section>
 
-    <div class="pricing-grid reveal">
-      <div class="price-card">
-        <div class="price-name">Free</div>
-        <div class="price-amount">&euro;0</div>
-        <div class="price-period">/month</div>
-        <div class="price-clients">1 client</div>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Starter</div>
-        <div class="price-amount">&euro;24</div>
-        <div class="price-period">/month</div>
-        <div class="price-clients">Up to 5 clients</div>
-      </div>
-      <div class="price-card featured">
-        <div class="price-badge">Most Popular</div>
-        <div class="price-name">Growth</div>
-        <div class="price-amount">&euro;44</div>
-        <div class="price-period">/month</div>
-        <div class="price-clients">Up to 15 clients</div>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Pro</div>
-        <div class="price-amount">&euro;69</div>
-        <div class="price-period">/month</div>
-        <div class="price-clients">Up to 40 clients</div>
-      </div>
-      <div class="price-card">
-        <div class="price-name">Unlimited</div>
-        <div class="price-amount">&euro;99</div>
-        <div class="price-period">/month</div>
-        <div class="price-clients">Unlimited clients</div>
-      </div>
+<footer>
+  <div class="w">
+    <div class="inner">
+      <div class="c">© 2026 Apto. Built in Belgium.</div>
+      <div class="fl"><a href="#">Privacy</a><a href="#">Terms</a><a href="mailto:hello@getapto.com">Contact</a></div>
     </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<section class="cta" id="waitlist">
-  <div class="container">
-    <h2>Built by a coach.<br>For coaches.</h2>
-    <p>Currently in development. Join the waitlist for early access.</p>
-    <form class="email-form" id="signup-form" onsubmit="handleSubmit(event)">
-      <input type="email" class="email-input" placeholder="your@email.com" required id="email-input">
-      <button type="submit" class="btn-primary" id="submit-btn">Get Early Access</button>
-    </form>
-    <p class="form-note">No spam. Just a heads up when we launch.</p>
-    <p id="success-msg" style="display:none; color: var(--accent); font-weight: 700; margin-top: 16px;">You're on the list! We'll be in touch.</p>
-  </div>
-</section>
-
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <p><span class="footer-brand">apto</span> &mdash; Smart coaching platform &mdash; &copy; 2026</p>
   </div>
 </footer>
 
+<div class="toast" id="toast"></div>
+
 <script>
-  // Scroll reveal
-  const reveals = document.querySelectorAll('.reveal');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        entry.target.classList.add('visible');
-      }
-    });
-  }, { threshold: 0.15 });
-  reveals.forEach(el => observer.observe(el));
-
-  // Toggle switches — click to toggle
-  document.querySelectorAll('.toggle-switch').forEach(toggle => {
-    toggle.addEventListener('click', () => {
-      toggle.classList.toggle('off');
-    });
-  });
-
-  // Email form
-  function handleSubmit(e) {
-    e.preventDefault();
-    const email = document.getElementById('email-input').value;
-    const btn = document.getElementById('submit-btn');
-    const msg = document.getElementById('success-msg');
-    
-     fetch('https://dkotchfyfivgaqkekdvn.supabase.co/rest/v1/waitlist', {
-       method: 'POST',
-       headers: { 'Content-Type': 'application/json', 'apikey': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb3RjaGZ5Zml2Z2Fxa2VrZHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjQwMjIsImV4cCI6MjA4NzcwMDAyMn0.bSdQsdXtrDTXwMvD9E3RQqAfBATKQR9EYPMusyIGXTA', 'Authorization': 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb3RjaGZ5Zml2Z2Fxa2VrZHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjQwMjIsImV4cCI6MjA4NzcwMDAyMn0.bSdQsdXtrDTXwMvD9E3RQqAfBATKQR9EYPMusyIGXTA' },
-       body: JSON.stringify({ email })
-     });
-    
-    btn.textContent = 'Added!';
-    btn.style.background = '#1a6b3a';
-    msg.style.display = 'block';
-    document.getElementById('email-input').value = '';
-    
-    setTimeout(() => {
-      btn.textContent = 'Get Early Access';
-      btn.style.background = '';
-    }, 3000);
-  }
-
-  // Animate tool items striking through on scroll
-  const toolObserver = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        const items = entry.target.querySelectorAll('.tool-item');
-        items.forEach((item, i) => {
-          setTimeout(() => {
-            item.querySelector('.strike').style.transform = 'translateY(-50%) scaleX(1)';
-            item.style.opacity = '0.5';
-          }, i * 200 + 500);
-        });
-      }
-    });
-  }, { threshold: 0.3 });
-  
-  document.querySelectorAll('.tool-stack').forEach(el => toolObserver.observe(el));
+var SU='https://dkotchfyfivgaqkekdvn.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRrb3RjaGZ5Zml2Z2Fxa2VrZHZuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzIxMjQwMjIsImV4cCI6MjA4NzcwMDAyMn0.bSdQsdXtrDTXwMvD9E3RQqAfBATKQR9EYPMusyIGXTA';
+function toast(m){var t=document.getElementById('toast');t.textContent=m;t.classList.add('on');setTimeout(function(){t.classList.remove('on')},3e3)}
+async function go(eid,fid,sid){
+  var e=document.getElementById(eid).value.trim();
+  if(!e||e.indexOf('@')<0){toast('Enter a valid email');return}
+  var f=document.getElementById(fid),s=document.getElementById(sid),btn=f.querySelector('button'),o=btn.textContent;
+  btn.textContent='...';btn.disabled=true;
+  try{
+    var r=await fetch(SU+'/rest/v1/coach_waitlist',{method:'POST',headers:{'Content-Type':'application/json',apikey:SK,Authorization:'Bearer '+SK,Prefer:'return=minimal'},body:JSON.stringify({email:e,status:'pending'})});
+    if(r.ok){f.style.display='none';s.style.display='block';toast("You're in! 🎉")}
+    else{var err=await r.json();if(err.code==='23505'){f.style.display='none';s.style.display='block';toast("Already on the list! 🙌")}else{toast('Something went wrong');console.error(err)}}
+  }catch(x){toast('Network error');console.error(x)}
+  btn.textContent=o;btn.disabled=false;
+}
+document.getElementById('he').addEventListener('keydown',function(e){if(e.key==='Enter')go('he','hf','hs')});
+document.getElementById('ce').addEventListener('keydown',function(e){if(e.key==='Enter')go('ce','cf','cs')});
+new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis')}})},{threshold:.08,rootMargin:'0px 0px -20px 0px'}).observe(document.querySelector('.rv'));
+document.querySelectorAll('.rv').forEach(function(el){new IntersectionObserver(function(es){if(es[0].isIntersecting){el.classList.add('vis')}},{threshold:.08,rootMargin:'0px 0px -20px 0px'}).observe(el)});
 </script>
-
 </body>
 </html>
