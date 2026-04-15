@@ -117,7 +117,7 @@ nav{position:fixed;top:0;left:0;right:0;z-index:200;padding:.7rem 2rem;display:f
 .pc.hl{border-color:var(--g);box-shadow:0 0 32px var(--gg)}
 .pc.hl::before{content:'Popular';position:absolute;top:-9px;left:50%;transform:translateX(-50%);background:var(--g);color:#070A0E;font-size:.58rem;font-weight:800;padding:.15rem .55rem;border-radius:50px;text-transform:uppercase;letter-spacing:.04em}
 .pc h3{font-size:.85rem;margin-bottom:.5rem}
-.pc .pr{font-family:'Syne';font-size:1.8rem;font-weight:800}
+.pc .pr{font-family:'DM Sans';font-size:1.8rem;font-weight:800}
 .pc .pr span{font-size:.72rem;font-weight:400;color:var(--t3)}
 .pc .cl{font-size:.72rem;color:var(--t4);margin:.3rem 0 1rem}
 .pn{font-size:.8rem;color:var(--t3);margin-top:1.25rem}
@@ -174,6 +174,12 @@ footer .fl a:hover{color:var(--t3)}
   .hform,.cform{flex-direction:column}
   .ph{width:135px}
   .stats-row{gap:1rem}
+  .hero h1{font-size:1.8rem}
+  .hero{padding:7rem 1rem 0}
+  .w{padding:0 1rem}
+  .cta h2{font-size:1.4rem}
+  .cta .desc{font-size:.85rem}
+  .cform button{font-size:.8rem;padding:.6rem 1rem}
 }
 </style>
 </head>
@@ -323,7 +329,7 @@ footer .fl a:hover{color:var(--t3)}
   <p class="desc rv">Join the beta. Free to start. No card required.</p>
   <div class="cform rv" id="cf">
     <input type="email" id="ce" placeholder="your@email.com">
-    <button class="b bg blg" onclick="go('ce','cf','cs')">Get early access →</button>
+    <button class="b bg blg" onclick="go('ce','cf','cs')">Join beta →</button>
   </div>
   <div class="ok" id="cs"><div class="ic">✓</div><h3>You're in.</h3><p>Founding coach invite incoming.</p></div>
 </section>
